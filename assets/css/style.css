@@ -1,0 +1,32 @@
+body {
+    background-image: url(../images/dust_scratches.png);
+    font-family: 'Times New Roman', Times, serif
+}
+
+header{
+    background-color: #eee;
+    height: 60px;
+}
+h1 {
+    width:50%;
+    margin: auto;
+    text-align: center; 
+    padding-top:10px;
+   
+}
+.signIn{
+    text-align: center; 
+    margin: 5px auto;
+    font-size: 16px;
+}
+.player1, .player2, .result{
+    border: 1px solid black;
+    height: 250px;
+}
+
+.chatbox{
+    width: 70%;
+    margin: auto;
+    background-color: white;
+    height: 150px;
+}
