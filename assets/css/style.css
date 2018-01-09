@@ -24,9 +24,14 @@ h1 {
     height: 250px;
 }
 
+.playground{
+    width: 80%;
+    margin: 10px auto;
+}
+
 .chatbox{
     width: 70%;
-    margin: auto;
-    background-color: white;
+    margin: 20px auto;
     height: 150px;
 }
+

@@ -18,27 +18,42 @@
             </div>
         </div>
     </header>
-    <div class = "signIn">
-        <div class="row">
-            <div class="col-md-12 signIn">
-                <input type="text" class = "name" placeholder="Name">
-                <button class = "startButton">Start</button>
+    <div class="container-fluid">
+        <div class = "signIn">
+            <div class="row">
+                <div class="col-md-12 signIn">
+                    <input type="text" class = "name" placeholder="Name">
+                    <button class = "startButton">Start</button>
+                </div>
             </div>
         </div>
-    </div>
-    <div class = "playground">
-        <div class="row">
-            <div class="col-md-4 player1"></div>
-            <div class="col-md-4 result"></div>
-            <div class="col-md-4 player2"></div>
+        <div class = "playground">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="player1"></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="result"></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="player2"></div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class = "chatbox">
-        <div class="row">
-            <div class="col-md-12"></div>
+        <div class = "chatbox">
+            <div class="row">
+                <div class="col-md-12">
+                    <textarea class="form-control" id= "messages" rows="6"></textarea>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="your message">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" class="send">Send</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-        
+    </div>   
     
     
     
