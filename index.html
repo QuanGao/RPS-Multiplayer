@@ -8,35 +8,42 @@
     <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' integrity='sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u' crossorigin='anonymous'>
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-    <script src='https://www.gstatic.com/firebasejs/live/3.0/firebase.js'></script>
+    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+    <script src="assets/javascript/game.js"></script>
 </head>
 <body>
-    <header>
-        <div class = "row">
-            <div class="col-md-12">
-                <h1>Rock Paper Scissors</h1>
-            </div>
-        </div>
-    </header>
     <div class="container-fluid">
+        <header>
+            <div class = "row">
+                <div class="col-md-12">
+                    <h1>Rock Paper Scissors</h1>
+                </div>
+            </div>
+        </header>
         <div class = "signIn">
             <div class="row">
                 <div class="col-md-12 signIn">
                     <input type="text" class = "name" placeholder="Name">
-                    <button class = "startButton">Start</button>
+                    <button class = "signInButton">Sign In</button>
                 </div>
             </div>
         </div>
         <div class = "playground">
             <div class="row">
                 <div class="col-md-4">
-                    <div class="player1"></div>
+                    <div class="player1">
+                        <h3>Waiting for Player 1</h3>
+                        <!-- <p>Wins: <span>0</span> Losses: <span>0</span></p> -->
+                    </div>
                 </div>
                 <div class="col-md-4">
                     <div class="result"></div>
                 </div>
                 <div class="col-md-4">
-                    <div class="player2"></div>
+                    <div class="player2">
+                        <h3>Waiting for Player 2</h3>
+                        <!-- <p>Wins: <span>0</span> Losses: <span>0</span></p> -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,7 +52,7 @@
                 <div class="col-md-12">
                     <textarea class="form-control" id= "messages" rows="6"></textarea>
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="your message">
+                        <input type="text" class="form-control" placeholder="write message to your opponent here">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="button" class="send">Send</button>
                         </span>

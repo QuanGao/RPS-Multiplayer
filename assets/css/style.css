@@ -1,6 +1,7 @@
 body {
     background-image: url(../images/dust_scratches.png);
-    font-family: 'Times New Roman', Times, serif
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center; 
 }
 
 header{
@@ -10,7 +11,6 @@ header{
 h1 {
     width:50%;
     margin: auto;
-    text-align: center; 
     padding-top:10px;
    
 }
