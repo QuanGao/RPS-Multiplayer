@@ -10,9 +10,37 @@ $(document).ready(function(){
   firebase.initializeApp(config);
 
   var database = firebase.database();
+  var userID = 1;
+  var connectedRef = database.ref(".info/connected");
+  var connectionsRef = database.ref("/connections");
 
   $(".signInButton").on("click",function(){
-      var userName = $(".name").val();
-      if(database.ref("/players"))
+    event.preventDefault();
+    var userName = $(".name").val();
+ 
+})
+  function writePlayer(userID, name){
+    database.ref("players/" + userID).set({
+      playerName: userName,
+      wins:0,
+      losses:0
+    })
+  }  
+
+
+  connectedRef.on("value",function(snap){
+    console.log(snap.val());
+    if(snap.val()){
+      var con = connectionsRef.push(true);
+      console.log("user connected");
+      con.onDisconnect().remove()
+    }   
   })
+  var numPlayers;
+  connectionsRef.on("value",function(snap){
+    numPlayers = snap.numChildren();
+    console.log(numPlayers);
+  })
+ 
+
 }) 
