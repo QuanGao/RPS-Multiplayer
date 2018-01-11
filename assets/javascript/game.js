@@ -21,31 +21,37 @@ $(document).ready(function(){
   var player1Ref = database.ref("/playerData/1");
   var player2Ref = database.ref("/playerData/2"); 
   var turnsRef = database.ref("/turns"); 
-  var numPlayers;
+
   var playerSignInRef = database.ref("/signIn"); 
 
-player1Ref.on("value",function(snap){
-  if(snap.child("name").exists()){
-    player1Name = snap.val().name;
-    player1Wins = snap.val().wins;
-    player1Losses = snap.val().losses;
-    $(".player1").find("h3").text(player1Name); 
-  } else { 
-    $(".player1").find("h3").text("Waiting or Player 1");
-  }
-})
+  player1Ref.on("value",function(snap){
+    if(snap.child("name").exists()){
+      player1Name = snap.val().name;
+      player1Wins = snap.val().wins;
+      player1Losses = snap.val().losses;
+      $(".player1").find("h3").text(player1Name);
+      $(".player1").find(".wins").text("Wins: "+player1Wins);
+      $(".player1").find(".losses").text("Losses: "+player1Losses);
+    } else { 
+      $(".player1").find("h3").text("Waiting for Player 1");
+    }
+  })
 
-player2Ref.on("value",function(snap){
-  if(snap.child("name").exists()){
-    player2Name = snap.val().name;
-    player2Wins = snap.val().wins;
-    player2Losses = snap.val().losses;
-    $(".player2").find("h3").text(player2Name);
-  } else {
-    $(".player2").find("h3").text("Waiting or Player 2"); 
-  }
-})
+  player2Ref.on("value",function(snap){
+    if(snap.child("name").exists()){
+      player2Name = snap.val().name;
+      player2Wins = snap.val().wins;
+      player2Losses = snap.val().losses;
+      $(".player2").find("h3").text(player2Name);
+      $(".player2").find(".wins").text("Wins: "+player2Wins);
+      $(".player2").find(".losses").text("Losses: "+player2Losses); 
+    } else {
+      $(".player2").find("h3").text("Waiting for Player 2");
+    }
+  })
 
+  var player1Exist;
+  var player2Exist;
   $(".signInButton").on("click",function(){
     event.preventDefault();
     var userName = $(".name").val();
@@ -67,19 +73,23 @@ player2Ref.on("value",function(snap){
   })
 
 
+  var player1Choice;
+  var player2Choice;
+  var numPlayers = 0;
+  playersRef.on("child_added",function(snap){
+    numPlayers++; 
+    if(numPlayers === 2){
+      displayOptions(1);
+      displayOptions(2);
+    }
+  }) 
 
-
-  // function displayNameScore(){
-  //   $(".player"+userID).find("h3").text(userName)
-  //   database.ref("players/" + userID)
-  // }
-
-  // function displayOptions(){
-  //   var rock = $("<p>").text("Rock")
-  //   var paper = $("<p>").text("Paper")
-  //   var scissors = $("<p>").text("Scissors")
-  //   $(".player"+userID).append(rock).append(paper).append(scissors);
-  // }
+  function displayOptions(id){
+      var rock = $("<p>").text("Rock")
+      var paper = $("<p>").text("Paper")
+      var scissors = $("<p>").text("Scissors")
+      $(".player"+id).append(rock).append(paper).append(scissors);
+  }
 
 
 
