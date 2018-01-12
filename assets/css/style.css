@@ -24,6 +24,9 @@ h1 {
     height: 250px;
 }
 
+.active{
+    border: 2px solid yellowgreen;
+}
 .playground{
     width: 80%;
     margin: 10px auto;

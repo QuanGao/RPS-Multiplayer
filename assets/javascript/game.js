@@ -19,8 +19,8 @@ $(document).ready(function(){
         var con = connectionsRef.push(true);
         console.log("user connected");
         con.onDisconnect().remove();
-        database.ref("/playerData/p1").onDisconnect().remove();
-        database.ref("/playerData/p2").onDisconnect().remove();    
+        // database.ref("/playerData/p1").onDisconnect().remove();
+        // database.ref("/playerData/p2").onDisconnect().remove();    
       }   
     })
     var numConnections;
@@ -48,11 +48,11 @@ $(document).ready(function(){
     var playerlist;
 
     
-    var userRef = database.ref("/playerData/"+userRole);
-    var opRef = database.ref("/playerData/"+opRole);
+    var p1Ref = database.ref("/playerData/p1");
+    var p2Ref = database.ref("/playerData/p2");
   
     
-    database.ref("/playerData/p1").on("value",function(snap){
+    p1Ref.on("value",function(snap){
         var p1_name; 
         var p1_Wins; 
         var p1_Losses;   
@@ -70,7 +70,7 @@ $(document).ready(function(){
         $(".p1").find(".losses").text("Losses: "+ p1_Losses);
     })  
 
-    database.ref("/playerData/p2").on("value",function(snap){
+    p2Ref.on("value",function(snap){
         var p2_name; 
         var p2_Wins; 
         var p2_Losses;   
@@ -88,11 +88,39 @@ $(document).ready(function(){
         $(".p2").find(".losses").text("Losses: "+ p2_Losses);
     })
 
-
-    $("."+userRole).on("click",".option",function(){
-        var choice = $(this).attr("data-choice");
-
+    $(".p1").on("click",".option",function(){
+        var p1_choice = $(this).attr("data-choice");
+        p1Ref.child("choice").set(p1_choice)
+        database.ref().child("turn").set(2);        
     })
+
+    $(".p2").on("click",".option",function(){
+        var p2_choice = $(this).attr("data-choice");
+        p2Ref.child("choice").set(p2_choice)
+        database.ref().child("turn").set(1);
+     
+    })
+
+    database.ref().child("turn").on("value",function(snap){
+        if(snap.val()){
+            if(snap.val()===1){
+                $(".p1").addClass("active");
+                $(".p2").removeClass("active");
+                if(userRole === "p1"){
+                    displayOptions()
+                }
+            } else if(snap.val()===2){
+                $(".p2").addClass("active"); 
+                $(".p1").removeClass("active");
+                if(userRole === "p2"){
+                    displayOptions()
+                }
+
+            }
+        }    
+    })
+
+  
 
     playersRef.on("value",function(snap){
         numPlayers = snap.numChildren();
@@ -105,8 +133,12 @@ $(document).ready(function(){
 
     playersRef.on("child_added",function(snap,prevChildkey){
         if(prevChildkey){
+            if(userRole === "p1"){
             displayOptions();
-            console.log("both ready")
+            }
+        database.ref().child("turn").set(1);
+        database.ref().child("turn").onDisconnect().remove();  
+        console.log("both ready") 
         }
     })
     
@@ -125,6 +157,8 @@ $(document).ready(function(){
                 wins:0,
                 losses:0,
             }); 
+
+        playersRef.child(userRole).onDisconnect().remove();
         $(".signIn").hide();
         $(".note").html(`<h3>hi ${userName}, you are player ${userRole[1]}</h3>`)    
         } else if(numPlayers===1){
@@ -136,7 +170,8 @@ $(document).ready(function(){
                 losses:0,
             });
             $(".signIn").hide();
-            $(".note").html(`<h3>hi ${userName}, you are player ${userRole[1]}</h3>`)   
+            $(".note").html(`<h3>hi ${userName}, you are player ${userRole[1]}</h3>`)
+            playersRef.child(userRole).onDisconnect().remove();   
         }
         console.log(userRole,opRole); 
     });
@@ -144,4 +179,26 @@ $(document).ready(function(){
 
   
   }) 
-  
+      // function getResult(){
+    //     if ((p1Guess === "r") && (p2Guess === "s")) {
+    //         p1_win++;
+    //         p2_losses++;
+    //       } else if ((userGuess === "r") && (computerGuess === "p")) {
+    //         p1_losses++;
+    //         p2_wins++;
+    //       } else if ((userGuess === "s") && (computerGuess === "r")) {
+    //         p1_losses++;
+    //         p2_wins++;
+    //       } else if ((userGuess === "s") && (computerGuess === "p")) {
+    //         p1_win++;
+    //         p2_losses++;
+    //       } else if ((userGuess === "p") && (computerGuess === "r")) {
+    //         p1_win++;
+    //         p2_losses++;
+    //       } else if ((userGuess === "p") && (computerGuess === "s")) {
+    //         p1_losses++;
+    //         p2_wins++;
+    //       } else if (userGuess === computerGuess) {
+    //         console.log("tie")
+    //       }
+    // }
