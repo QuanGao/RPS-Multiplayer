@@ -19,7 +19,7 @@ h1 {
     margin: 5px auto;
     font-size: 16px;
 }
-.player1, .player2, .result{
+.player, .result{
     border: 1px solid black;
     height: 250px;
 }
@@ -38,4 +38,17 @@ h1 {
 .playground p{
     font-size: 20px;
     line-height: 1.8em;
+}
+
+.score{
+    position: relative;
+    bottom: 10px;
+}
+.option{
+    width: 50%;
+    margin: 10px auto;
+}
+.option:hover{
+    background-color: lightyellow;
+    cursor: pointer;
 }
