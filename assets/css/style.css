@@ -14,6 +14,9 @@ h1 {
     padding-top:10px;
    
 }
+h2 {
+    font-size: 28px;
+}
 .signIn{
     text-align: center; 
     margin: 5px auto;
@@ -27,7 +30,7 @@ h1 {
     border: 2px solid yellowgreen;
 }
 .playground{
-    width: 80%;
+    width: 90%;
     margin: 10px auto;
 }
 

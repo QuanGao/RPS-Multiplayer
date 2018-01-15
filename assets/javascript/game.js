@@ -218,7 +218,7 @@ $(document).ready(function(){
                 wins: 0,
                 losses: 0
             });
-            $(".note").html(`<h3>Hi ${userName}, you are player 2 !</h3>`)
+            $(".note").html(`<h3>Hi Lil'${userName}, you are player 2!</h3>`)
             $(".p2").find("h3").text(userName);
             playersRef.child("p2").onDisconnect().remove() 
         } else{
@@ -229,7 +229,7 @@ $(document).ready(function(){
                 wins: 0,
                 losses: 0
             });
-            $(".note").html(`<h3>Hi ${userName}, you are player 1 ! </h3>`) 
+            $(".note").html(`<h3>Hi Lil'${userName}, you are player 1! </h3>`) 
             $(".p1").find("h3").text(userName); 
             playersRef.child("p1").onDisconnect().remove()  
         }        
