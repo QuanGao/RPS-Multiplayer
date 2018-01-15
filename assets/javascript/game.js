@@ -39,16 +39,19 @@ $(document).ready(function(){
     };
 
     var displayNameScoresP1 = function(){
+        $(".p1").find(".score").show();
         $(".p1").find("h2").text(p1.name);
         $(".p1").find(".wins").text("Wins: "+ p1.wins);
         $(".p1").find(".losses").text("Losses: "+ p1.losses);
     }
     var displayNameScoresP2 = function(){
+        $(".p2").find(".score").show();
         $(".p2").find("h2").text(p2.name);
         $(".p2").find(".wins").text("Wins: "+ p2.wins);
         $(".p2").find(".losses").text("Losses: "+ p2.losses);
     }
-    var updateNameScores = function(){
+
+    var updateNameScoresP1 = function(){
         playersRef.child("p1").on("value", function(snap){
             if(snap.val()){
                 p1.name = snap.val().name;
@@ -57,6 +60,8 @@ $(document).ready(function(){
                 displayNameScoresP1();
             }
         });
+    }
+    var updateNameScoresP2 = function(){
         playersRef.child("p2").on("value", function(snap){
             if(snap.val()){
                 p2.name = snap.val().name;
@@ -66,49 +71,50 @@ $(document).ready(function(){
             }
         })
     }
-
+    var uponTurn1 = function(){
+        $(".p1").addClass("active");
+        $(".p2").removeClass("active");
+        if(p1.role === "user"){
+            displayOptionsP1();
+            displayTurn();
+        } else {
+            displayWait();
+        }        
+    }
+    var uponTurn2 = function(){
+        $(".p2").addClass("active"); 
+        $(".p1").removeClass("active");
+        if(p2.role === "user"){
+            displayOptionsP2();
+            displayTurn();
+        } else{
+            displayWait();
+        }
+    }
+    var uponTurn3 = function(){
+        judge();
+        storeWinsLosses();
+        var timeoutID = setTimeout(startNewRound, 2000)
+    }
     var uponTurnChange = function(){
         database.ref().child("turn").on("value",function(snap){
             if(snap.val()){
                 if(snap.val()===1){
-                    $(".p1").addClass("active");
-                    $(".p2").removeClass("active");
-                    if(p1.role === "user"){
-                        displayOptionsP1();
-                        displayTurn();
-                    } else {
-                        displayWait();
-                    }
+                    uponTurn1();   
                 } else if(snap.val()===2){
-                    $(".p2").addClass("active"); 
-                    $(".p1").removeClass("active");
-                    if(p2.role === "user"){
-                        displayOptionsP2();
-                        displayTurn();
-                    } else{
-                        displayWait();
-                    }
+                    uponTurn2();
                 } else if(snap.val()===3){           
-                    judge();
-                    storeWinsLosses();
-                    var timeoutID = setTimeout(function(){
-                        database.ref().child("turn").set(1);
-                        $(".result").text("");
-                        startNewRound();
-                        $(".note2").html("")
-                    }, 3000)
+                    uponTurn3();
                 }
             }    
         })
     }
-
     var storeDisplayChoice = function(player, choice){
         playersRef.child(player).update({
             choice: choice
         })
-        $(".option").hide();
-        var ch = $("<span class = 'picked'>").text(choice)
-        $("."+ player).find(".options").append(ch);
+        $(".option").hide();       
+        $("."+ player).find(".picked").text(choice)
     }  
 
     $(".p1").on("click",".option",function(){
@@ -133,33 +139,32 @@ $(document).ready(function(){
             p2.choice = snap.val()
         })
     }
+
+    var uponP1win = function(){
+        p1.wins++;
+        p2.losses++;
+        $(".result").html(`${p1.name} <br> Wins!`)
+    }
+    var uponP2win = function(){
+        p1.losses++;
+        p2.wins++;
+        $(".result").html(`${p2.name} <br> Wins!`)
+    }
     var judge = function(){     
         if ((p1.choice === "ROCK") && (p2.choice === "SCISSORS")) {
-            p1.wins++;
-            p2.losses++;
-            $(".result").text(p1.name + " Wins!")
+            uponP1win();
         } else if ((p1.choice=== "ROCK") && (p2.choice === "PAPER")) {
-            p1.losses++;
-            p2.wins++;
-            $(".result").text(p2.name + " Wins!")
+            uponP2win();
         } else if ((p1.choice === "SCISSORS") && (p2.choice === "ROCK")) {
-            p1.losses++;
-            p2.wins++;
-            $(".result").text(p2.name + " Wins!")
+            uponP2win();
         } else if ((p1.choice === "SCISSORS") && (p2.choice === "PAPER")) {
-            p1.wins++;
-            p2.losses++;
-            $(".result").text(p1.name + " Wins!")
+            uponP1win();
         } else if ((p1.choice === "PAPER") && (p2.choice === "ROCK")) {
-            p1.wins++;
-            p2.losses++;
-            $(".result").text(p1.name + " Wins!")
+            uponP1win();
         } else if ((p1.choice === "PAPER") && (p2.choice === "SCISSORS")) {
-            p1.losses++;
-            p2.wins++;
-            $(".result").text(p2.name + " Wins!")
+            uponP2win();
         } else if (p1.choice === p2.choice) {
-            $(".result").text("Tie Game!")
+            $(".result").html("Tie<br>Game!")
         }     
     }
     var storeWinsLosses = function(){
@@ -173,10 +178,12 @@ $(document).ready(function(){
         })
     };
     var startNewRound = function(){
-        $(".picked").empty();
+        $(".picked").text("");
+        $(".result").text("");
         if(p1.role === "user"){
             $(".option").show();
         };
+        database.ref().child("turn").set(1);  
     }
     var displayWait = function(){
         var name = p1.role === "user" ? p2.name:p1.name;
@@ -199,48 +206,63 @@ $(document).ready(function(){
             } 
         })
     }
-
-    var restart = function(){
-    playersRef.on("child_removed", function(snap,prevChildkey){
-
-    })
+    var onPlayerLeave = function(){
+        playersRef.on("child_removed", function(snap){
+            $(".picked").text("");
+            $(".option").hide();
+            if(snap.val()){
+                if(p1.role === "user"){
+                    $(".p2").find("h2").text("Waiting For Player 2...")
+                    $(".p2").find(".score").hide();
+                } else {
+                    $(".p1").find("h2").text("Waiting For Player 1...")
+                    $(".p1").find(".score").hide();
+                }
+            }            
+        });
     }
-    
-    $(".signInButton").on("click",function(){
-        event.preventDefault();
-        userName = $(".name").val();
-        if(numPlayers === 2){
-            alert("please wait");
-        } else if(numPlayers===1 && playerlist[0]==="p1"){
-            p2.role = "user";
+    var intiateUserP1 = function(userName){
+        p1.role = "user";
+        playersRef.child("p1").set({
+            name: userName,
+            wins: 0,
+            losses: 0
+        });
+        $(".note").html(`<h3>Hi ${userName}, you are player 1! </h3>`) 
+        $(".p1").find("h3").text(userName); 
+        playersRef.child("p1").onDisconnect().remove()  
+    }
+    var intiateUserP2 = function(userName){
+        p2.role = "user";
             playersRef.child("p2").set({
                 name: userName,
                 wins: 0,
                 losses: 0
             });
-            $(".note").html(`<h3>Hi Lil'${userName}, you are player 2!</h3>`)
+            $(".note").html(`<h3>Hi ${userName}, you are player 2!</h3>`)
             $(".p2").find("h3").text(userName);
             playersRef.child("p2").onDisconnect().remove() 
+    }
+    $(".signInButton").on("click",function(){
+        event.preventDefault();
+        var input = $(".name").val();
+        if(numPlayers === 2){
+            alert("please wait");
+        } else if(numPlayers===1 && playerlist[0]==="p1"){
+            intiateUserP2(input);
         } else{
-            p1.role = "user";
-            p1.name = userName;
-            playersRef.child("p1").set({
-                name: userName,
-                wins: 0,
-                losses: 0
-            });
-            $(".note").html(`<h3>Hi Lil'${userName}, you are player 1! </h3>`) 
-            $(".p1").find("h3").text(userName); 
-            playersRef.child("p1").onDisconnect().remove()  
+            intiateUserP1(input);
         }        
         $(".signIn").hide();        
     });
 
     getPlayerInfo();
-    updateNameScores();
+    updateNameScoresP1();
+    updateNameScoresP2();
     startGame();
     uponTurnChange();
     getChoiceP1();
     getChoiceP2();
-
+    onPlayerLeave();
+  
 }) 

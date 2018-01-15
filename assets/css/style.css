@@ -4,25 +4,30 @@ body {
     text-align: center; 
 }
 
-header{
-    background-color: #eee;
+header{  
     height: 60px;
+    width: 100%;
+}
+.title{
+    background-color: #eee;
+    padding-left:0;
+    padding-right:0;
 }
 h1 {
     width:50%;
     margin: auto;
     padding-top:10px;
-   
 }
 h2 {
-    font-size: 28px;
+    font-size: 25px;
 }
+
 .signIn{
     text-align: center; 
     margin: 5px auto;
     font-size: 16px;
 }
-.player, .result{
+.player, .resultDiv{
     border: 1px solid black;
     height: 250px;
 }
@@ -57,8 +62,12 @@ h2 {
     background-color: lightyellow;
     cursor: pointer;
 }
-.picked, .result{
+.picked, .resultDiv{
     font-size: 45px;
     font-weight: bold;
     font-family: sans-serif;
+}
+
+.result{
+    margin-top: 20px;
 }
