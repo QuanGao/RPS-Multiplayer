@@ -3,31 +3,50 @@ body {
     font-family: 'Times New Roman', Times, serif;
     text-align: center; 
 }
-
-header{  
-    height: 60px;
-    width: 100%;
-}
 .title{
     background-color: #eee;
-    padding-left:0;
-    padding-right:0;
 }
 h1 {
-    width:50%;
-    margin: auto;
     padding-top:10px;
     padding-bottom:10px;
 }
 h2 {
-    font-size: 24px;
-    margin:10px;
-}
-.player h2 {
-    margin-bottom: 5px;
+    font-size: 20px;   
 }
 h3{
-    font-size: 20px;
+    font-size: 16px;
+}
+ol{
+    list-style: none;
+    font-size: 16px;
+    text-align: center;
+    width:100%;
+    margin:auto;
+    padding-left:0px;  
+}
+.player{
+    position: relative;
+}
+.player h2{
+    margin-bottom: 30px;
+}
+.score{
+    position: absolute;
+    bottom: 10px;
+    font-size: 16px;
+    width:100%;
+    margin:auto;
+}
+.picked, .resultDiv{
+    font-size: 23px;
+    font-weight: bold;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.picked{
+    width: 100%;
+    height: 50%;
+    margin: auto;
+    text-align:center;
 }
 .signIn{
     text-align: center; 
@@ -37,22 +56,19 @@ h3{
 .player, .resultDiv{
     border: 1px solid black;
     height: 220px;
+    margin: auto;
+}
+.result{
+    margin-top: 30px;
+    text-align:center;
+    
 }
 .active{
     border: 2px solid yellowgreen;
 }
 .playground{
-    width: 90%;
-    margin: 10px auto;
-}
-.player{
-    position: relative;
-}
-.score{
-    position: absolute;
-    bottom: 10px;
-    width:100%;
-    margin:auto;
+    width: 100%;
+    margin: 5px auto;
 }
 .chatbox{
     width: 70%;
@@ -69,41 +85,44 @@ h3{
     text-align: left;
     padding: 10px;
 }
-.playground p{
-    font-size: 20px;
-    line-height: 1.5em;
-}
-
-.score{
-    position: absolute;
-    bottom: 10px;
-}
-.options{
-    max-height: 100px;
-}
-.option{
-    width: 50%;
-    margin: 10px auto;
-}
 .option:hover{
     background-color: lightyellow;
     cursor: pointer;
 }
-.picked, .resultDiv{
-    font-size: 45px;
-    font-weight: bold;
-    font-family: sans-serif;
-}
-.picked{
-    position:absolute;
-    top: 35px;
-    left: 0px;
-    width: 100%;
-    margin: auto;
-    text-align:center;
-}
-.result{
-    margin-top: 30px;
-    text-align:center;
-    
-}
+
+@media (min-width: 576px) {
+    h2 {
+        font-size: 24px;   
+    }
+    ol, .score, h3{ 
+        font-size: 20px;
+    }
+    .picked, .resultDiv{
+        font-size: 35px;
+    }
+ }
+ @media (min-width: 768px) {
+    .picked, .resultDiv{
+        font-size: 50px;
+    }
+ }
+ @media (min-width: 992px) {
+    .player,.resultDiv{
+        width: 80%;
+    }
+    .p1{
+        left: 60px;
+    }
+    .p2{
+        right: 60px;
+    }
+
+ }
+ @media (min-width:1200px) {
+    .chatbox{
+        width: 50%;
+    }
+    .resultDiv{
+        width: 60%;
+    }
+ }
