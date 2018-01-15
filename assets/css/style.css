@@ -17,19 +17,26 @@ h1 {
     width:50%;
     margin: auto;
     padding-top:10px;
+    padding-bottom:10px;
 }
 h2 {
-    font-size: 25px;
+    font-size: 24px;
+    margin:10px;
 }
-
+.player h2 {
+    margin-bottom: 5px;
+}
+h3{
+    font-size: 20px;
+}
 .signIn{
     text-align: center; 
-    margin: 5px auto;
+    margin: 10px auto;
     font-size: 16px;
 }
 .player, .resultDiv{
     border: 1px solid black;
-    height: 250px;
+    height: 220px;
 }
 .active{
     border: 2px solid yellowgreen;
@@ -38,7 +45,15 @@ h2 {
     width: 90%;
     margin: 10px auto;
 }
-
+.player{
+    position: relative;
+}
+.score{
+    position: absolute;
+    bottom: 10px;
+    width:100%;
+    margin:auto;
+}
 .chatbox{
     width: 70%;
     margin: 20px auto;
@@ -47,12 +62,15 @@ h2 {
 
 .playground p{
     font-size: 20px;
-    line-height: 1.8em;
+    line-height: 1.5em;
 }
 
 .score{
-    position: relative;
+    position: absolute;
     bottom: 10px;
+}
+.options{
+    max-height: 100px;
 }
 .option{
     width: 50%;
@@ -67,7 +85,16 @@ h2 {
     font-weight: bold;
     font-family: sans-serif;
 }
-
+.picked{
+    position:absolute;
+    top: 40px;
+    left: 0px;
+    width: 100%;
+    margin: auto;
+    text-align:center;
+}
 .result{
-    margin-top: 20px;
+    margin-top: 30px;
+    text-align:center;
+    
 }
