@@ -280,17 +280,29 @@ $(document).ready(function(){
                     var newMsg = msgObj.text.trim();
                     var sender = msgObj.user.trim();
                     var color = sender === inputUserName ? "purple": "";
-                    $("#messages").append(`<p><b style="color: ${color}">${sender}: ${newMsg}<b></p>`)
+                    $("#messages").append(`<p><b style="color: ${color}">${sender}: ${newMsg}<b></p>`);
+                    $("#messages").scrollTop($("#messages")[0].scrollHeight);
+                    console.log($("#messages")[0].scrollHeight)
                 }
+                
             }
         })
     }
-    $("#sendBtn").on("click",function(){
+
+    var saveMsg = function(){
         var msg = $("#msgInput").val();
-        database.ref("/messages").push({
-            user: inputUserName,
-            text: msg 
-        })
+        if(inputUserName){
+            database.ref("/messages").push({
+                user: inputUserName,
+                text: msg 
+            })
+        } else{
+            alert("please sign in first");
+        };
+    }
+    $("#sendBtn").on("click",function(){
+        saveMsg();
+        $("#msgInput").val("");
     })
     updateMsg();
 }) 
