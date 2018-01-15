@@ -20,17 +20,15 @@
                 </div>
             </div>
         </header>
-        <!-- <div class = "signIn"> -->
-            <div class="row">
-                <div class="col-md-12 note">
-                    <div class="signIn">
-                        <input type="text" class = "name" placeholder="Name">
-                        <button class = "signInButton" type ="submit">Sign In</button>
-                    </div>
+        <div class="row">
+            <div class="col-md-12 note">
+                <div class="signIn">
+                    <input type="text" class = "name" placeholder="Name">
+                    <button class = "signInButton" type ="submit">Sign In</button>
                 </div>
-                <div class="note2"></div>
             </div>
-        <!-- </div> -->
+            <div class="note2"></div>
+        </div>
         <div class = "playground">
             <div class="row">
                 <div class="col-md-4">
@@ -69,11 +67,11 @@
         <div class = "chatbox">
             <div class="row">
                 <div class="col-md-12">
-                    <textarea class="form-control" id= "messages" rows="6"></textarea>
+                    <div id= "messages"></div>
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="write message to your opponent here">
+                        <input type="text" class="form-control" id="msgInput" placeholder="write message to your opponent here">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" class="send">Send</button>
+                            <button class="btn btn-default" type="button" id="sendBtn">Send</button>
                         </span>
                     </div>
                 </div>

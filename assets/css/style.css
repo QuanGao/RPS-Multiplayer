@@ -59,7 +59,16 @@ h3{
     margin: 20px auto;
     height: 150px;
 }
-
+#messages{
+    height: 150px;
+    background: white;
+    margin: 3px 0px 3px 0px;
+    border: 1px solid lightgrey;
+    overflow: auto;
+    line-height: 1.5em;
+    text-align: left;
+    padding: 10px;
+}
 .playground p{
     font-size: 20px;
     line-height: 1.5em;

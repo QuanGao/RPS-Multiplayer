@@ -15,6 +15,7 @@ $(document).ready(function(){
     var p2 = {wins:0, losses:0};
     var playerlist = [];
     var numPlayers = 0;
+    var inputUserName;
     var getPlayerInfo = function(){
             playersRef.on("value",function(snap){
             numPlayers = snap.numChildren();
@@ -245,13 +246,13 @@ $(document).ready(function(){
     }
     $(".signInButton").on("click",function(){
         event.preventDefault();
-        var input = $(".name").val();
+        inputUserName = $(".name").val();
         if(numPlayers === 2){
             alert("please wait");
         } else if(numPlayers===1 && playerlist[0]==="p1"){
-            intiateUserP2(input);
+            intiateUserP2(inputUserName);
         } else{
-            intiateUserP1(input);
+            intiateUserP1(inputUserName);
         }        
         $(".signIn").hide();        
     });
@@ -264,5 +265,32 @@ $(document).ready(function(){
     getChoiceP1();
     getChoiceP2();
     onPlayerLeave();
-  
+
+    var updateMsg = function(){
+        database.ref("/messages").on("value",function(snap){
+            var storedMessages = snap.val();
+            if(storedMessages == null) {
+                return;
+            } else{
+                $("#messages").empty();
+                var keys = Object.keys(storedMessages);
+                for(var i=0; i<keys.length; i++){
+                    var key = keys[i];
+                    var msgObj = storedMessages[key]
+                    var newMsg = msgObj.text.trim();
+                    var sender = msgObj.user.trim();
+                    var color = sender === inputUserName ? "purple": "";
+                    $("#messages").append(`<p><b style="color: ${color}">${sender}: ${newMsg}<b></p>`)
+                }
+            }
+        })
+    }
+    $("#sendBtn").on("click",function(){
+        var msg = $("#msgInput").val();
+        database.ref("/messages").push({
+            user: inputUserName,
+            text: msg 
+        })
+    })
+    updateMsg();
 }) 
