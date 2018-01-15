@@ -54,3 +54,8 @@ h1 {
     background-color: lightyellow;
     cursor: pointer;
 }
+.picked, .result{
+    font-size: 45px;
+    font-weight: bold;
+    font-family: sans-serif;
+}

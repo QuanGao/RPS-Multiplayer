@@ -10,203 +10,237 @@ $(document).ready(function(){
     firebase.initializeApp(config);
     var database = firebase.database();
     var playersRef = database.ref("/playerData");
-  //monitor how many people are on the RPS sites.
-    var connectedRef = database.ref(".info/connected");
-    var connectionsRef = database.ref("/connections");
-    connectedRef.on("value",function(snap){
-      console.log(snap.val());
-      if(snap.val()){
-        var con = connectionsRef.push(true);
-        console.log("user connected");
-        con.onDisconnect().remove();
-      }   
-    })
-    var numConnections;
-    connectionsRef.on("value",function(snap){
-      numConnections = snap.numChildren();
-      console.log("numConnections" + numConnections);
-    })
 
-    function displayOptions(){
-        $("."+userRole).find(".rock").text("Rock");
-        $("."+userRole).find(".paper").text("Paper");
-        $("."+userRole).find(".scissors").text("Scissors");
-        $("."+opRole).find(".option").hide();
+    var p1 = {wins:0, losses:0};
+    var p2 = {wins:0, losses:0};
+    var playerlist = [];
+    var numPlayers = 0;
+    var getPlayerInfo = function(){
+            playersRef.on("value",function(snap){
+            numPlayers = snap.numChildren();
+            if(snap.val()){
+                playerlist = Object.keys(snap.val());
+            };
+        })
+    }
+    var displayOptionsP1 = function(){
+        $(".p1").find(".option").show();
+        $(".p1").find(".rock").text("Rock");
+        $(".p1").find(".paper").text("Paper");
+        $(".p1").find(".scissors").text("Scissors");
+        $(".p2").find(".option").hide();
+    };
+    var displayOptionsP2 = function(){
+        $(".p2").find(".option").show();
+        $(".p2").find(".rock").text("Rock");
+        $(".p2").find(".paper").text("Paper");
+        $(".p2").find(".scissors").text("Scissors");
+        $(".p1").find(".option").hide();
     };
 
-    var userWins;
-    var userLosses;
-    var opName;
-    var opWins;
-    var opLosses;
-    var userName;
-    var userRole;
-    var opRole;
-    var numPlayers;
-    var playerlist;
-
-    
-    var p1Ref = database.ref("/playerData/p1");
-    var p2Ref = database.ref("/playerData/p2");
-  
-    var p1_name; 
-    var p1_Wins; 
-    var p1_Losses;
-    var p1_choice;   
-    p1Ref.on("value",function(snap){
-        if(snap.val()){
-            p1_name = snap.val().name;
-            p1_Wins = snap.val().wins;
-            p1_Losses = snap.val().losses;
-            $(".p1").find(".wins").text("Wins: "+ p1_Wins);
-            $(".p1").find(".losses").text("Losses: "+ p1_Losses);
-            if(snap.val().choice){
-                p1_choice = snap.val().choice;
+    var displayNameScoresP1 = function(){
+        $(".p1").find("h2").text(p1.name);
+        $(".p1").find(".wins").text("Wins: "+ p1.wins);
+        $(".p1").find(".losses").text("Losses: "+ p1.losses);
+    }
+    var displayNameScoresP2 = function(){
+        $(".p2").find("h2").text(p2.name);
+        $(".p2").find(".wins").text("Wins: "+ p2.wins);
+        $(".p2").find(".losses").text("Losses: "+ p2.losses);
+    }
+    var updateNameScores = function(){
+        playersRef.child("p1").on("value", function(snap){
+            if(snap.val()){
+                p1.name = snap.val().name;
+                p1.wins = snap.val().wins;
+                p1.losses = snap.val().losses;
+                displayNameScoresP1();
             }
-        } else {
-            p1_name = "Waiting for player 1";
-            p1_Wins = 0;
-            p1_Losses = 0;
-        }
-        $(".p1").find("h3").text(p1_name);
-        console.log("p1chocie"+p1_choice)
-
-    })  
-
-    var p2_name; 
-    var p2_Wins; 
-    var p2_Losses;
-    var p2_choice;   
-    p2Ref.on("value",function(snap){
-        if(snap.val()){
-            p2_name = snap.val().name;
-            p2_Wins = snap.val().wins;
-            p2_Losses = snap.val().losses;
-            $(".p2").find(".wins").text("Wins: "+ p2_Wins);
-            $(".p2").find(".losses").text("Losses: "+ p2_Losses);
-            if(snap.val().choice){
-                p2_choice = snap.val().choice;
+        });
+        playersRef.child("p2").on("value", function(snap){
+            if(snap.val()){
+                p2.name = snap.val().name;
+                p2.wins = snap.val().wins;
+                p2.losses = snap.val().losses;
+                displayNameScoresP2();
             }
-        } else {
-            p2_name = "Waiting for player 2";
-            p2_Wins = 0;
-            p2_Losses = 0;
-        }
-        $(".p2").find("h3").text(p2_name);
-        console.log("p2choice"+p2_choice)
-    
-    })
+        })
+    }
+
+    var uponTurnChange = function(){
+        database.ref().child("turn").on("value",function(snap){
+            if(snap.val()){
+                if(snap.val()===1){
+                    $(".p1").addClass("active");
+                    $(".p2").removeClass("active");
+                    if(p1.role === "user"){
+                        displayOptionsP1();
+                        displayTurn();
+                    } else {
+                        displayWait();
+                    }
+                } else if(snap.val()===2){
+                    $(".p2").addClass("active"); 
+                    $(".p1").removeClass("active");
+                    if(p2.role === "user"){
+                        displayOptionsP2();
+                        displayTurn();
+                    } else{
+                        displayWait();
+                    }
+                } else if(snap.val()===3){           
+                    judge();
+                    storeWinsLosses();
+                    var timeoutID = setTimeout(function(){
+                        database.ref().child("turn").set(1);
+                        $(".result").text("");
+                        startNewRound();
+                        $(".note2").html("")
+                    }, 3000)
+                }
+            }    
+        })
+    }
+
+    var storeDisplayChoice = function(player, choice){
+        playersRef.child(player).update({
+            choice: choice
+        })
+        $(".option").hide();
+        var ch = $("<span class = 'picked'>").text(choice)
+        $("."+ player).find(".options").append(ch);
+    }  
 
     $(".p1").on("click",".option",function(){
-        var choice = $(this).attr("data-choice");
-        console.log(choice)
-        p1Ref.child("choice").set(choice)
-        database.ref().child("turn").set(2);        
+        var c = $(this).attr("data-choice");
+        storeDisplayChoice("p1", c);
+        database.ref().child("turn").set(2);
     })
 
     $(".p2").on("click",".option",function(){
-        var choice = $(this).attr("data-choice");
-        p2Ref.child("choice").set(choice, getResult)
+        var c = $(this).attr("data-choice");
+        storeDisplayChoice("p2", c);
         database.ref().child("turn").set(3);
-        // getResult();
     })
 
-    database.ref().child("turn").on("value",function(snap){
-        if(snap.val()){
-            if(snap.val()===1){
-                $(".p1").addClass("active");
-                $(".p2").removeClass("active");
-                if(userRole === "p1"){
-                    displayOptions()
-                }
-            } else if(snap.val()===2){
-                $(".p2").addClass("active"); 
-                $(".p1").removeClass("active");
-                if(userRole === "p2"){
-                    displayOptions()
-                }
-
-            } else if(snap.val()===3){
-               return;
-            }
-        }    
-    })
-
-    playersRef.on("value",function(snap){
-        numPlayers = snap.numChildren();
-        if(snap.val()){
-            playerlist = Object.keys(snap.val());
-            console.log(playerlist);
+    var getChoiceP1 = function(){
+        playersRef.child("p1").child("choice").on("value",function(snap){
+            p1.choice = snap.val()
+        })
+    }
+    var getChoiceP2 = function(){
+        playersRef.child("p2").child("choice").on("value",function(snap){
+            p2.choice = snap.val()
+        })
+    }
+    var judge = function(){     
+        if ((p1.choice === "ROCK") && (p2.choice === "SCISSORS")) {
+            p1.wins++;
+            p2.losses++;
+            $(".result").text(p1.name + " Wins!")
+        } else if ((p1.choice=== "ROCK") && (p2.choice === "PAPER")) {
+            p1.losses++;
+            p2.wins++;
+            $(".result").text(p2.name + " Wins!")
+        } else if ((p1.choice === "SCISSORS") && (p2.choice === "ROCK")) {
+            p1.losses++;
+            p2.wins++;
+            $(".result").text(p2.name + " Wins!")
+        } else if ((p1.choice === "SCISSORS") && (p2.choice === "PAPER")) {
+            p1.wins++;
+            p2.losses++;
+            $(".result").text(p1.name + " Wins!")
+        } else if ((p1.choice === "PAPER") && (p2.choice === "ROCK")) {
+            p1.wins++;
+            p2.losses++;
+            $(".result").text(p1.name + " Wins!")
+        } else if ((p1.choice === "PAPER") && (p2.choice === "SCISSORS")) {
+            p1.losses++;
+            p2.wins++;
+            $(".result").text(p2.name + " Wins!")
+        } else if (p1.choice === p2.choice) {
+            $(".result").text("Tie Game!")
+        }     
+    }
+    var storeWinsLosses = function(){
+        playersRef.child("p1").update({
+            wins: p1.wins,
+            losses: p1.losses
+        })
+        playersRef.child("p2").update({
+            wins: p2.wins,
+            losses: p2.losses
+        })
+    };
+    var startNewRound = function(){
+        $(".picked").empty();
+        if(p1.role === "user"){
+            $(".option").show();
         };
-        console.log("np"+numPlayers)
-    })
+    }
+    var displayWait = function(){
+        var name = p1.role === "user" ? p2.name:p1.name;
+        var inform = $("<h3>").text("Waiting for " +name+ " to choose")
+        $(".note2").html(inform)
+    }
+    var displayTurn = function(){
+        var notification = $("<h3>").text("It's your turn!")
+        $(".note2").html(notification);
+    }
+    var startGame = function(){
+        playersRef.on("child_added",function(snap,prevChildkey){
+            if(prevChildkey){           
+                database.ref().child("turn").set(1);
+                database.ref().child("turn").onDisconnect().remove();  
+                if(p1.role === "user"){
+                    displayOptionsP1();
+                }
+                console.log("both ready")
+            } 
+        })
+    }
 
-    playersRef.on("child_added",function(snap,prevChildkey){
-        if(prevChildkey){
-            if(userRole === "p1"){
-            displayOptions();
-            }
-        database.ref().child("turn").set(1);
-        database.ref().child("turn").onDisconnect().remove();  
-        console.log("both ready") 
-        }
+    var restart = function(){
+    playersRef.on("child_removed", function(snap,prevChildkey){
+
     })
- 
+    }
+    
     $(".signInButton").on("click",function(){
         event.preventDefault();
         userName = $(".name").val();
         if(numPlayers === 2){
-            console.log("too many");
-        } else if(numPlayers===0){
-            userRole = "p1";
-            opRole = "p2";
-            playersRef.child(userRole).set({
+            alert("please wait");
+        } else if(numPlayers===1 && playerlist[0]==="p1"){
+            p2.role = "user";
+            playersRef.child("p2").set({
                 name: userName,
-                wins:0,
-                losses:0,
-            }); 
-
-        playersRef.child(userRole).onDisconnect().remove();
-        $(".signIn").hide();
-        $(".note").html(`<h3>hi ${userName}, you are player ${userRole[1]}</h3>`)    
-        } else if(numPlayers===1){
-            userRole = playerlist[0] === "p1" ? "p2":"p1";
-            opRole = playerlist[0];
-            playersRef.child(userRole).set({
-                name: userName,
-                wins:0,
-                losses:0,
+                wins: 0,
+                losses: 0
             });
-            $(".signIn").hide();
-            $(".note").html(`<h3>hi ${userName}, you are player ${userRole[1]}</h3>`)
-            playersRef.child(userRole).onDisconnect().remove();   
-        }
-        console.log(userRole,opRole); 
+            $(".note").html(`<h3>Hi ${userName}, you are player 2 !</h3>`)
+            $(".p2").find("h3").text(userName);
+            playersRef.child("p2").onDisconnect().remove() 
+        } else{
+            p1.role = "user";
+            p1.name = userName;
+            playersRef.child("p1").set({
+                name: userName,
+                wins: 0,
+                losses: 0
+            });
+            $(".note").html(`<h3>Hi ${userName}, you are player 1 ! </h3>`) 
+            $(".p1").find("h3").text(userName); 
+            playersRef.child("p1").onDisconnect().remove()  
+        }        
+        $(".signIn").hide();        
     });
 
+    getPlayerInfo();
+    updateNameScores();
+    startGame();
+    uponTurnChange();
+    getChoiceP1();
+    getChoiceP2();
 
-  
-  }) 
-  var getResult = function(){
-        if ((p1_choice === "r") && (p2_choice === "s")) {
-            p1_win++;
-            p2_losses++;
-          } else if ((p1_choice=== "r") && (p2_choice === "p")) {
-            p1_losses++;
-            p2_wins++;
-          } else if ((p1_choice === "s") && (p2_choice === "r")) {
-            p1_losses++;
-            p2_wins++;
-          } else if ((p1_choice === "s") && (p2_choice === "p")) {
-            p1_win++;
-            p2_losses++;
-          } else if ((p1_choice === "p") && (p2_choice === "r")) {
-            p1_win++;
-            p2_losses++;
-          } else if ((p1_choice === "p") && (p2_choice === "s")) {
-            p1_losses++;
-            p2_wins++;
-          } else if (p1_choice === p2_choice) {
-            $(".result").text("Tie Time!")
-          }
-    }
+}) 
