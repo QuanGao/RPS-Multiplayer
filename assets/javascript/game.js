@@ -10,7 +10,6 @@ $(document).ready(function(){
     firebase.initializeApp(config);
     var database = firebase.database();
     var playersRef = database.ref("/playerData");
-
     var p1 = {wins:0, losses:0};
     var p2 = {wins:0, losses:0};
     var playerlist = [];
@@ -125,19 +124,6 @@ $(document).ready(function(){
         $(".option").hide();       
         $("."+ player).find(".picked").text(choice)
     }  
-
-    $(".p1").on("click",".option",function(){
-        var c = $(this).attr("data-choice");
-        storeDisplayChoice("p1", c);
-        database.ref().child("turn").set(2);
-    })
-
-    $(".p2").on("click",".option",function(){
-        var c = $(this).attr("data-choice");
-        storeDisplayChoice("p2", c);
-        database.ref().child("turn").set(3);
-    })
-
     var getChoiceP1 = function(){
         playersRef.child("p1").child("choice").on("value",function(snap){
             p1.choice = snap.val()
@@ -263,16 +249,6 @@ $(document).ready(function(){
         }        
         $(".signIn").hide();        
     });
-
-    getPlayerInfo();
-    updateNameScoresP1();
-    updateNameScoresP2();
-    startGame();
-    uponTurnChange();
-    getChoiceP1();
-    getChoiceP2();
-    onPlayerLeave();
-
     var updateMsg = function(){
         database.ref("/messages").on("value",function(snap){
             var storedMessages = snap.val();
@@ -309,6 +285,33 @@ $(document).ready(function(){
     $("#sendBtn").on("click",function(){
         saveMsg();
         $("#msgInput").val("");
+    });
+    $("#msgInput").keyup(function(e){
+        if(e.keyCode === 13){
+            $("#sendBtn").click();
+        }
+    });
+
+    $(".p1").on("click",".option",function(){
+        var c = $(this).attr("data-choice");
+        storeDisplayChoice("p1", c);
+        database.ref().child("turn").set(2);
     })
+
+    $(".p2").on("click",".option",function(){
+        var c = $(this).attr("data-choice");
+        storeDisplayChoice("p2", c);
+        database.ref().child("turn").set(3);
+    })
+
+    getPlayerInfo();
+    updateNameScoresP1();
+    updateNameScoresP2();
+    startGame();
+    uponTurnChange();
+    getChoiceP1();
+    getChoiceP2();
+    onPlayerLeave();
     updateMsg();
+
 }) 
