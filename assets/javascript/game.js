@@ -97,6 +97,12 @@ $(document).ready(function(){
         storeWinsLosses();
         var timeoutID = setTimeout(startNewRound, 2000)
     }
+    var uponTurn0 = function(){
+        $(".picked").text("");
+        $(".option").hide();
+        $(".player").removeClass("active");
+        $(".note2").empty();
+    }
     var uponTurnChange = function(){
         database.ref().child("turn").on("value",function(snap){
             if(snap.val()){
@@ -106,6 +112,8 @@ $(document).ready(function(){
                     uponTurn2();
                 } else if(snap.val()===3){           
                     uponTurn3();
+                } else if(snap.val()===0){
+                    uponTurn0();
                 }
             }    
         })
@@ -209,8 +217,7 @@ $(document).ready(function(){
     }
     var onPlayerLeave = function(){
         playersRef.on("child_removed", function(snap){
-            $(".picked").text("");
-            $(".option").hide();
+            uponTurn0();
             if(snap.val()){
                 if(p1.role === "user"){
                     $(".p2").find("h2").text("Waiting For Player 2...")
@@ -288,7 +295,6 @@ $(document).ready(function(){
             }
         })
     }
-
     var saveMsg = function(){
         var msg = $("#msgInput").val();
         if(inputUserName){
