@@ -216,6 +216,7 @@ $(document).ready(function(){
     } 
     var startGame = function(){
         playersRef.on("child_added",function(){
+            database.ref("/turn").onDisconnect().remove();
             numPlayers++;
             if(numPlayers===2){           
                 database.ref().child("turn").set(1);           
@@ -226,7 +227,7 @@ $(document).ready(function(){
     var onPlayerLeave = function(){
         playersRef.on("child_removed", function(snap){
             numPlayers--;
-            database.ref("/turn").set(null); 
+
             if(snap.val()){
                 if(p1.role === "user"){
                     $(".p2").find("h2").text("Waiting For Player 2...")
