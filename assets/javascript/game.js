@@ -12,7 +12,7 @@ $(document).ready(function(){
     var playersRef = database.ref("/playerData");
     var p1 = {wins:0, losses:0};
     var p2 = {wins:0, losses:0};
-    var playerlist = [];
+    // var playerlist = [];
     var numPlayers = 0;
     var inputUserName;
     var updateMsg = function(){
@@ -182,7 +182,7 @@ $(document).ready(function(){
         judge();
         storeWinsLosses();         
         var timeoutID = setTimeout(function(){
-            database.ref().child("turn").set(1);
+            database.ref().update({turn:1}); 
             $(".picked").text("");
         }, 3000)
     }
@@ -195,7 +195,7 @@ $(document).ready(function(){
         $(".result").empty();
     }
     var uponTurnChange = function(){
-        database.ref().child("turn").on("value",function(snap){         
+        database.ref("/turn").on("value",function(snap){         
             if(snap.val()){
                 if(snap.val()===1){
                     uponTurn1();   
@@ -214,19 +214,11 @@ $(document).ready(function(){
         $("."+ player).find(".option").hide();    
         $("."+ player).find(".picked").text(choice)
     } 
-
-    var getPlayerInfo = function(){
-        playersRef.on("value",function(snap){
-        numPlayers = snap.numChildren();
-        if(snap.val()){
-            playerlist = Object.keys(snap.val());
-        };
-    })
-}
     var startGame = function(){
-        playersRef.on("child_added",function(snap,prevChildkey){
-            if(numPlayers===1){           
-                database.ref().child("turn").set(1); 
+        playersRef.on("child_added",function(){
+            numPlayers++;
+            if(numPlayers===2){           
+                database.ref().child("turn").set(1);           
                 console.log("both ready")
             } 
         })
@@ -234,8 +226,7 @@ $(document).ready(function(){
     var onPlayerLeave = function(){
         playersRef.on("child_removed", function(snap){
             numPlayers--;
-            database.ref().child("turn").set(0); 
-            uponTurn0();
+            database.ref("/turn").set(null); 
             if(snap.val()){
                 if(p1.role === "user"){
                     $(".p2").find("h2").text("Waiting For Player 2...")
@@ -273,13 +264,13 @@ $(document).ready(function(){
     $(".p1").on("click",".option",function(){
         var c = $(this).attr("data-choice");
         storeDisplayChoice("p1", c);
-        database.ref().child("turn").set(2);
+        database.ref().update({turn:2});     
     })
 
     $(".p2").on("click",".option",function(){
         var c = $(this).attr("data-choice");
         storeDisplayChoice("p2", c);
-        database.ref().child("turn").set(3);
+        database.ref().update({turn:3}); 
     })
 
     $(".signInButton").on("click",function(){
@@ -287,7 +278,7 @@ $(document).ready(function(){
         inputUserName = $(".name").val();
         if(numPlayers === 2){
             alert("please wait");
-        } else if(numPlayers===1 && playerlist[0]==="p1"){
+        } else if(numPlayers===1 && p1.name){
             intiateUserP2(inputUserName);
         } else{
             intiateUserP1(inputUserName);
@@ -306,7 +297,6 @@ $(document).ready(function(){
         }
     });
 
-    getPlayerInfo();
     updateNameScoresP1();
     updateNameScoresP2();
     startGame();
