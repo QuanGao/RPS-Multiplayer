@@ -12,7 +12,7 @@ $(document).ready(function(){
     var playersRef = database.ref("/playerData");
     var p1 = {wins:0, losses:0};
     var p2 = {wins:0, losses:0};
-    // var playerlist = [];
+
     var numPlayers = 0;
     var inputUserName;
     var updateMsg = function(){
@@ -31,7 +31,6 @@ $(document).ready(function(){
                     var color = sender === inputUserName ? "purple": "";
                     $("#messages").append(`<p><b style="color: ${color}">${sender}: ${newMsg}<b></p>`);
                     $("#messages").scrollTop($("#messages")[0].scrollHeight);
-                    console.log($("#messages")[0].scrollHeight)
                 }
                 
             }
@@ -220,7 +219,6 @@ $(document).ready(function(){
             numPlayers++;
             if(numPlayers===2){           
                 database.ref().child("turn").set(1);           
-                console.log("both ready")
             } 
         })
     }
