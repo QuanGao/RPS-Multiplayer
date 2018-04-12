@@ -184,6 +184,7 @@ $(document).ready(function(){
             database.ref().update({turn:1}); 
             $(".picked").text("");
         }, 3000)
+       
     }
     var uponTurn0 = function(){
         database.ref().child("messages").set(null);
